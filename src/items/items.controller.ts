@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Header, Param, Patch, Post } from '@nestjs/common';
 import { LibraryItem } from './items.model';
 import { ItemsService } from './items.service';
 
@@ -28,5 +28,18 @@ export class ItemsController {
     getSingleItem(@Param('id') itemId: string) {
         return this.itemsService.getItemById(itemId);
     }
+
+    //Patch
+    @Patch('/:id')
+    updateItem(
+        @Param('id') itemId: string,
+        @Body('title') itemTitle: string,
+        @Body('description') itemDesc: string,
+        @Body('type') itemType: string
+    ) {
+        this.itemsService.updateItem(itemId, itemTitle, itemDesc, itemType);
+        return null;
+    }
+
 
 }

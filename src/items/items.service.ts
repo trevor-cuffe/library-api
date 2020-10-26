@@ -20,9 +20,27 @@ export class ItemsService {
         return [...this.items];
     }
 
+    //get a single item by id
     getItemById(id: string) {
         const item = this.findItem(id)[0];
         return {...item};
+    }
+
+
+    //update an item with new values
+    updateItem(id: string, title: string, description: string, type: string) {
+        const [item, index] = this.findItem(id);
+        let updatedItem = {...item}
+        if(title) {
+            updatedItem.title = title;
+        }
+        if(description) {
+            updatedItem.description = description;
+        }
+        if(type) {
+            updatedItem.type = type;
+        }
+        this.items[index] = updatedItem;
     }
 
     private findItem(id: string): [LibraryItem, number] {
