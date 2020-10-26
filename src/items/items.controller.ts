@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Header, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, Param, Patch, Post, Query } from '@nestjs/common';
 import { LibraryItem } from './items.model';
 import { ItemsService } from './items.service';
 import { LibraryItemType } from './itemTypes';
@@ -6,6 +6,20 @@ import { LibraryItemType } from './itemTypes';
 @Controller('catalog')
 export class ItemsController {
     constructor(private readonly itemsService: ItemsService) {}
+
+    //Search Query
+    @Get('/search')
+    searchForItem(
+        @Query('by') searchBy: string,
+        @Query('value') searchValue: string
+    ) {
+        const keys = searchBy.split(',');
+        const values = searchValue.split(',');
+        const queries = {};
+        keys.forEach( (key, i) => queries[key] = values[i]);
+
+        return this.itemsService.search(queries);
+    }
 
     //Create New Item
     @Post()

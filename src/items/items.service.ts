@@ -27,6 +27,23 @@ export class ItemsService {
         return {...item};
     }
 
+    //search for items with queries
+    search(queries: {id?: string, title?: string, description?: string, type?: string}) {
+
+        let libraryItems = this.getAllItems();
+        
+        //match ID
+        if (queries.id) libraryItems = libraryItems.filter(item => item.id === queries.id);
+        //title contains string
+        if (queries.title) libraryItems = libraryItems.filter(item => item.title.toLowerCase().includes(queries.title.toLowerCase()));
+        //description contains string
+        if (queries.description) libraryItems = libraryItems.filter(item => item.description.toLowerCase().includes(queries.description.toLowerCase()));
+        //match type
+        if (queries.type) libraryItems = libraryItems.filter(item => item.type == queries.type);
+
+        return libraryItems;
+    }
+
 
     //update an item with new values
     updateItem(id: string, title: string, description: string, type: LibraryItemType) {
