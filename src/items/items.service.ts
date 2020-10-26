@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { LibraryItem } from "./items.model";
+import { LibraryItemType } from "./itemTypes";
 const uniqid = require("uniqid");
 
 @Injectable()
@@ -7,7 +8,7 @@ export class ItemsService {
     private items: LibraryItem[] = [];
 
     //create a new library item
-    createProduct(title: string, desc: string, type: string): string {
+    createProduct(title: string, desc: string, type: LibraryItemType): string {
         //generate a random string for a unique id
         const id: string = uniqid();
         const newItem = new LibraryItem(id, title, desc, type);
@@ -28,7 +29,7 @@ export class ItemsService {
 
 
     //update an item with new values
-    updateItem(id: string, title: string, description: string, type: string) {
+    updateItem(id: string, title: string, description: string, type: LibraryItemType) {
         const [item, index] = this.findItem(id);
         let updatedItem = {...item}
         if(title) {
