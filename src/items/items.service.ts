@@ -21,7 +21,7 @@ export class ItemsService {
     }
 
     //get a single item by id
-    getItemById(id: string) {
+    getItemById(id: string): LibraryItem {
         const item = this.findItem(id)[0];
         return {...item};
     }
@@ -41,6 +41,12 @@ export class ItemsService {
             updatedItem.type = type;
         }
         this.items[index] = updatedItem;
+    }
+
+    //delete item from database
+    deleteItem(id: string) {
+        const index = this.findItem(id)[1];
+        this.items.splice(index, 1);
     }
 
     private findItem(id: string): [LibraryItem, number] {

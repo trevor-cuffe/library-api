@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, Param, Patch, Post } from '@nestjs/common';
 import { LibraryItem } from './items.model';
 import { ItemsService } from './items.service';
 
@@ -29,7 +29,7 @@ export class ItemsController {
         return this.itemsService.getItemById(itemId);
     }
 
-    //Patch
+    //Update
     @Patch('/:id')
     updateItem(
         @Param('id') itemId: string,
@@ -38,6 +38,12 @@ export class ItemsController {
         @Body('type') itemType: string
     ) {
         this.itemsService.updateItem(itemId, itemTitle, itemDesc, itemType);
+        return null;
+    }
+
+    @Delete('/:id')
+    deleteItem(@Param('id') itemId: string) {
+        this.itemsService.deleteItem(itemId);
         return null;
     }
 
