@@ -8,10 +8,10 @@ export class ItemsService {
     private items: LibraryItem[] = [];
 
     //create a new library item
-    createProduct(title: string, desc: string, type: LibraryItemType): string {
+    createProduct(title: string, desc: string, type: string, isAvailable: boolean = true): string {
         //generate a random string for a unique id
         const id: string = uniqid();
-        const newItem = new LibraryItem(id, title, desc, type);
+        const newItem = new LibraryItem(id, title, desc, type, isAvailable);
         this.items.push(newItem);
         return id;
     }
@@ -28,7 +28,7 @@ export class ItemsService {
     }
 
     //search for items with queries
-    search(queries: {id?: string, title?: string, description?: string, type?: string}) {
+    search(queries: {id?: string, title?: string, description?: string, type?: string, isAvailable?: boolean}) {
 
         let libraryItems = this.getAllItems();
         
@@ -40,24 +40,20 @@ export class ItemsService {
         if (queries.description) libraryItems = libraryItems.filter(item => item.description.toLowerCase().includes(queries.description.toLowerCase()));
         //match type
         if (queries.type) libraryItems = libraryItems.filter(item => item.type == queries.type);
+        //check if available
+        if (queries.isAvailable) libraryItems = libraryItems.filter(item => item.isAvailable === Boolean(queries.isAvailable));
 
         return libraryItems;
     }
 
 
     //update an item with new values
-    updateItem(id: string, title: string, description: string, type: LibraryItemType) {
+    updateItem(id: string, title: string, description: string, type: string) {
         const [item, index] = this.findItem(id);
         let updatedItem = {...item}
-        if(title) {
-            updatedItem.title = title;
-        }
-        if(description) {
-            updatedItem.description = description;
-        }
-        if(type) {
-            updatedItem.type = type;
-        }
+        if(title) updatedItem.title = title;
+        if(description) updatedItem.description = description;
+        if(type) updatedItem.type = type;
         this.items[index] = updatedItem;
     }
 

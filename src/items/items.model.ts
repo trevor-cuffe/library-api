@@ -6,6 +6,7 @@ export class LibraryItem {
         public id: string,
         public title: string,
         public description: string,
-        public type: LibraryItemType
+        public type: string,
+        public isAvailable: boolean
     ){}
 }
