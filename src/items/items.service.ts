@@ -6,10 +6,33 @@ const uniqid = require("uniqid");
 export class ItemsService {
     private items: LibraryItem[] = [];
 
+    //create a new library item
     createProduct(title: string, desc: string, type: string): string {
+        //generate a random string for a unique id
         const id: string = uniqid();
         const newItem = new LibraryItem(id, title, desc, type);
         this.items.push(newItem);
         return id;
+    }
+
+    //get all items in the catalog
+    getAllItems() {
+        return [...this.items];
+    }
+
+    getItemById(id: string) {
+        const item = this.findItem(id)[0];
+        return {...item};
+    }
+
+    private findItem(id: string): [LibraryItem, number] {
+        const itemIndex = this.items.findIndex( (item) => item.id === id);
+        const foundItem = this.items[itemIndex];
+
+        if(!foundItem) {
+            throw new NotFoundException('Could not find library item');
+        }
+        return [foundItem, itemIndex];
+
     }
 }

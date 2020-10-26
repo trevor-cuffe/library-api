@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Header, Post } from '@nestjs/common';
+import { Body, Controller, Get, Header, Param, Post } from '@nestjs/common';
+import { LibraryItem } from './items.model';
 import { ItemsService } from './items.service';
 
 @Controller('catalog')
@@ -14,6 +15,18 @@ export class ItemsController {
     ): {id:string} {
         const newItemId = this.itemsService.createProduct(title, desc, type);
         return {id: newItemId};
+    }
+
+    //Index
+    @Get()
+    getAllItems() {
+        return {library_items: this.itemsService.getAllItems()};
+    }
+
+    //Show
+    @Get('/:id')
+    getSingleItem(@Param('id') itemId: string) {
+        return this.itemsService.getItemById(itemId);
     }
 
 }
