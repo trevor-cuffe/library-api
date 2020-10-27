@@ -53,6 +53,28 @@ export class ItemsService {
         
     }
 
+    async checkout(id: string): Promise<{message: string}> {
+        const item = await this.findItem(id);
+        if (!item.isAvailable) {
+            return {message: "Sorry, that item is already checked out!"}
+        } else {
+            item.isAvailable = false;
+            item.save();
+            return {message: `You checked out ${item.title}`}
+        }
+    }
+
+    async return(id: string): Promise<{message: string}> {
+        const item = await this.findItem(id);
+        if (item.isAvailable) {
+            return {message: "That item cannot be returned"}
+        } else {
+            item.isAvailable = true;
+            item.save();
+            return {message: `You returned ${item.title}`}
+        }
+    }
+
 
     //update an item with new values
     async updateItem(id: string, title: string, description: string, type: string): Promise<LibraryItem> {

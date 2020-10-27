@@ -72,6 +72,23 @@ export class ItemsController {
         return result;
     }
 
+    //Check Out Item
+    @Patch('/:id/checkout')
+    async checkOutItem(@Param('id') itemId: string) {
+        const result = await this.itemsService.checkout(itemId);
+        return result;
+    }
+
+    //Return Item
+    @Patch('/:id/return')
+    async returnItem(@Param('id') itemId: string) {
+        const result = await this.itemsService.return(itemId);
+        return result;
+    }
+
+
+    //Return Item
+
 
     
     //create a queries object with key-value pairs.
