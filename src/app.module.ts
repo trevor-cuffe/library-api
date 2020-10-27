@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { ItemsModule } from './items/items.module';
 
 @Module({
-  imports: [ItemsModule, MongooseModule.forRoot('mongodb://localhost/cuffe-library')],
+  imports: [ItemsModule, MongooseModule.forRoot('mongodb://localhost:27017/cuffe-library')],
   controllers: [AppController],
   providers: [AppService],
 })
