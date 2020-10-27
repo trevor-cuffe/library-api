@@ -1,39 +1,44 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
 import { LibraryItem } from "./items.model";
-import { LibraryItemType } from "./itemTypes";
-const uniqid = require("uniqid");
+import { Model } from 'mongoose';
 
 @Injectable()
 export class ItemsService {
-    private items: LibraryItem[] = [];
+
+    constructor(@InjectModel("LibraryItem") private readonly libraryItemModel: Model<LibraryItem>) {}
 
     //create a new library item
-    createProduct(title: string, desc: string, type: string, isAvailable: boolean = true): string {
-        //generate a random string for a unique id
-        const id: string = uniqid();
-        const newItem = new LibraryItem(id, title, desc, type, isAvailable);
-        this.items.push(newItem);
-        return id;
+    async createProduct(title: string, desc: string, type: string, isAvailable: boolean = true) {
+
+        const newItem = new this.libraryItemModel({
+            title,
+            description: desc,
+            type,
+            isAvailable
+        });
+        const result = await newItem.save();
+        return result._id;
     }
 
     //get all items in the catalog
-    getAllItems() {
-        return [...this.items];
+    async getAllItems() {
+        const items = await this.libraryItemModel.find().exec();
+        return items as LibraryItem[];
     }
 
     //get a single item by id
-    getItemById(id: string): LibraryItem {
-        const item = this.findItem(id)[0];
-        return {...item};
+    async getItemById(id: string): Promise<LibraryItem> {
+        const item = await this.findItem(id);
+        return item;
     }
 
     //search for items with queries
-    search(queries: {id?: string, title?: string, description?: string, type?: string, isAvailable?: boolean}) {
+    async search(queries: {id?: string, title?: string, description?: string, type?: string, isAvailable?: string}) {
+        let libraryItems = await this.getAllItems();
 
-        let libraryItems = this.getAllItems();
-        
         //match ID
-        if (queries.id) libraryItems = libraryItems.filter(item => item.id === queries.id);
+        if (queries.id) libraryItems = libraryItems.filter(item => item._id === queries.id);
         //title contains string
         if (queries.title) libraryItems = libraryItems.filter(item => item.title.toLowerCase().includes(queries.title.toLowerCase()));
         //description contains string
@@ -41,36 +46,44 @@ export class ItemsService {
         //match type
         if (queries.type) libraryItems = libraryItems.filter(item => item.type == queries.type);
         //check if available
-        if (queries.isAvailable) libraryItems = libraryItems.filter(item => item.isAvailable === Boolean(queries.isAvailable));
+        
+        if (queries.isAvailable !== undefined) libraryItems = libraryItems.filter(item => String(item.isAvailable) == queries.isAvailable);
 
         return libraryItems;
+        
     }
 
 
     //update an item with new values
-    updateItem(id: string, title: string, description: string, type: string) {
-        const [item, index] = this.findItem(id);
-        let updatedItem = {...item}
+    async updateItem(id: string, title: string, description: string, type: string): Promise<LibraryItem> {
+        const updatedItem = await this.findItem(id);
         if(title) updatedItem.title = title;
         if(description) updatedItem.description = description;
         if(type) updatedItem.type = type;
-        this.items[index] = updatedItem;
+        updatedItem.save();
+        return updatedItem;
     }
 
     //delete item from database
-    deleteItem(id: string) {
-        const index = this.findItem(id)[1];
-        this.items.splice(index, 1);
+    async deleteItem(id: string) {
+        const result = await this.libraryItemModel.deleteOne({_id: id});
+        if (result.deletedCount === 0) {
+            throw new NotFoundException('Could not find product.');
+        } else {
+            return {message: "Successfully deleted"};
+        }
     }
 
-    private findItem(id: string): [LibraryItem, number] {
-        const itemIndex = this.items.findIndex( (item) => item.id === id);
-        const foundItem = this.items[itemIndex];
-
-        if(!foundItem) {
+    private async findItem(id: string): Promise<LibraryItem> {
+        let item;
+        try {
+            item = await this.libraryItemModel.findById(id);
+        } catch (error) {
+            throw new NotFoundException('could not find library item');
+        }
+        if(!item) {
             throw new NotFoundException('Could not find library item');
         }
-        return [foundItem, itemIndex];
-
+        return item;
     }
 }

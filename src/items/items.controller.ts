@@ -7,7 +7,7 @@ export class ItemsController {
 
     //Search Query
     @Get('/search')
-    searchForItem(
+    async searchForItem(
         @Query('by') searchBy: string,
         @Query('value') searchValue: string
     ) {
@@ -20,50 +20,56 @@ export class ItemsController {
 
         const queries = this.createSearchQuery(keys, values);
 
-        return this.itemsService.search(queries);
+        const searchResults = await this.itemsService.search(queries);
+        return searchResults;
     }
 
     //Create New Item
     @Post()
-    createItem(
+    async createItem(
         @Body('title') title: string,
         @Body('description') desc: string,
         @Body('type') type: string,
         @Body('isAvailable') isAvailable: boolean
-    ): {id:string} {
-        const newItemId = this.itemsService.createProduct(title, desc, type, isAvailable);
+    ) {
+        const newItemId = await this.itemsService.createProduct(title, desc, type, isAvailable);
         return {id: newItemId};
     }
 
     //Index
     @Get()
-    getAllItems() {
-        return {library_items: this.itemsService.getAllItems()};
+    async getAllItems() {
+        const libraryItems = await this.itemsService.getAllItems();
+        return {library_items: libraryItems};
     }
 
     //Show
     @Get('/:id')
-    getSingleItem(@Param('id') itemId: string) {
-        return this.itemsService.getItemById(itemId);
+    async getSingleItem(@Param('id') itemId: string) {
+        const libraryItem = await this.itemsService.getItemById(itemId);
+        return libraryItem;
     }
 
     //Update
     @Patch('/:id')
-    updateItem(
+    async updateItem(
         @Param('id') itemId: string,
         @Body('title') itemTitle: string,
         @Body('description') itemDesc: string,
         @Body('type') itemType: string
     ) {
-        this.itemsService.updateItem(itemId, itemTitle, itemDesc, itemType);
-        return null;
+        let updatedItem = await this.itemsService.updateItem(itemId, itemTitle, itemDesc, itemType);
+        return {
+            message: "Successfully Updated",
+            updated_item: updatedItem
+        };
     }
 
     //Destroy
     @Delete('/:id')
-    deleteItem(@Param('id') itemId: string) {
-        this.itemsService.deleteItem(itemId);
-        return null;
+    async deleteItem(@Param('id') itemId: string) {
+        const result = await this.itemsService.deleteItem(itemId);
+        return result;
     }
 
 

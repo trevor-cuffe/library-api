@@ -1,12 +1,16 @@
-import { LibraryItemType } from './itemTypes'
+import * as mongoose from 'mongoose';
 
-export class LibraryItem {
+export const LibraryItemSchema = new mongoose.Schema({
+    title: {type: String, required: true},
+    description: {type: String, required: true},
+    type: {type: String, required: true},
+    isAvailable: {type: Boolean, required: true}
+});
 
-    constructor(
-        public id: string,
-        public title: string,
-        public description: string,
-        public type: string,
-        public isAvailable: boolean
-    ){}
+export interface LibraryItem extends mongoose.Document {
+    _id: string,
+    title: string,
+    description: string,
+    type: string,
+    isAvailable: boolean
 }
