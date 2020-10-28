@@ -10,13 +10,15 @@ export class AuthController {
         private readonly authService: AuthService,
         private readonly userService: UsersService
     ) {}
-        
+    
+    //Login Route
     @UseGuards(LocalAuthGuard)
     @Post('/login')
     async login(@Request() req) {
         return this.authService.login(req.user);
     }
 
+    //Register New User Route
     @Post('/register')
     async register(
         @Body('username') username: string,

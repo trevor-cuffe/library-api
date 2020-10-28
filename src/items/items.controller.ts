@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Request, Header, UseGuards, Param, Patch
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ItemsService } from './items.service';
 import { UsersService } from '../users/users.service';
+import { AdminGuard } from 'src/auth/admin.guard';
 
 @Controller('catalog')
 export class ItemsController {
@@ -30,6 +31,7 @@ export class ItemsController {
     }
 
     //Create New Item
+    @UseGuards(JwtAuthGuard, AdminGuard)
     @Post()
     async createItem(
         @Body('title') title: string,
@@ -56,6 +58,7 @@ export class ItemsController {
     }
 
     //Update
+    @UseGuards(JwtAuthGuard, AdminGuard)
     @Patch('/:id')
     async updateItem(
         @Param('id') itemId: string,
@@ -71,6 +74,7 @@ export class ItemsController {
     }
 
     //Destroy
+    @UseGuards(JwtAuthGuard, AdminGuard)
     @Delete('/:id')
     async deleteItem(@Param('id') itemId: string) {
         const result = await this.itemsService.deleteItem(itemId);
