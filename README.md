@@ -39,17 +39,17 @@ Other catalog actions:
 
 Request Type | Route | Used For
 -------------|-------|---------
-GET | '/catalog/search' | Search for library items based on matching properties. Search parameters should be sent as queries in the url. <br>Use the key "by" to indicate which fields to search by (comma-separated if using multiple fields), and "value" to enter a comma-separated list of corrosponding values.<br>Ex. '/catalog/search?by=id,title,description,isAvailable&value=idValue,titleValue,descriptionValue,isAvailableValue'. Id and isAvailable ("true" or "false") must match exactly.<br> Title and description queries will find any item for which the matching string appears somewhere in it's title or description properties (not case-sensitive)
-POST | '/catalog/:id/checkout' | User must be logged in. If the item matching the ID in the url is available, the item property "isAvailable"<br> will be updated to false, and the item id will be added to the property "checkedOutItems" on the current user, and a confirmation message will be returned
-POST | '/catalog/:id/return' | User must be logged in. If the item id is found in the "checkedOutItems" property of the current user, it will<br> be removed, and the "isAvailable" property of the library item matching that id will be set to true
+GET | '/catalog/search' | Search for library items based on matching properties. Search parameters should be sent as queries in the url. Use the key "by" to indicate which fields to search by (comma-separated if using multiple fields), and "value" to enter a comma-separated list of corrosponding values. Ex. '/catalog/search?by=id,title,description,isAvailable&value=idValue,titleValue,descriptionValue,isAvailableValue'. Id and isAvailable ("true" or "false") must match exactly. Title and description queries will find any item for which the matching string appears somewhere in it's title or description properties (not case-sensitive)
+POST | '/catalog/:id/checkout' | User must be logged in. If the item matching the ID in the url is available, the item property "isAvailable" will be updated to false, and the item id will be added to the property "checkedOutItems" on the current user, and a confirmation message will be returned
+POST | '/catalog/:id/return' | User must be logged in. If the item id is found in the "checkedOutItems" property of the current user, it will be removed, and the "isAvailable" property of the library item matching that id will be set to true
 
 User routes:
 
 Request Type | Route | Used For
 -------------|-------|---------
-POST | '/auth/register' | register new user. Send JSON in the body, matching the following format:<br>{ username: string, password: string, admin_code: string }  The admin_code property is optional, and will register the new user as an admin if it<br> matches the string "makemeanadmin" (if deploying this app, update the property in users.service.ts to compare to a string found in the<br>environment variables). Returns the id of the newly created user.
-POST | '/auth/login' | Send JSON in the body matching the following format: { username: string, password: string }<br>This will return a JWT access_key. To use the access key for user authentication, add a header key "Authorization" with value "Bearer &lt;access_key&gt;"<br>(replace &lt;access_key&gt; with the value of the returned JWT access_key). Returns a confirmation message.
-GET | '/profile' | User must be logged in. Displays the profile of the logged in user, including id, username,<br>whether the user is an admin, and a list of ids of checked out items
+POST | '/auth/register' | register new user. Send JSON in the body, matching the following format: { username: string, password: string, admin_code: string }  The admin_code property is optional, and will register the new user as an admin if it matches the string "makemeanadmin" (if deploying this app, update the property in users.service.ts to compare to a string found in the environment variables). Returns the id of the newly created user.
+POST | '/auth/login' | Send JSON in the body matching the following format: { username: string, password: string } This will return a JWT access_key. To use the access key for user authentication, add a header key "Authorization" with value "Bearer &lt;access_key&gt;" (replace &lt;access_key&gt; with the value of the returned JWT access_key). Returns a confirmation message.
+GET | '/profile' | User must be logged in. Displays the profile of the logged in user, including id, username, whether the user is an admin, and a list of ids of checked out items
 
 
 
