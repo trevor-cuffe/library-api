@@ -1,9 +1,14 @@
-import { Body, Controller, Delete, Get, Header, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Request, Header, UseGuards, Param, Patch, Post, Query } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ItemsService } from './items.service';
+import { UsersService } from '../users/users.service';
 
 @Controller('catalog')
 export class ItemsController {
-    constructor(private readonly itemsService: ItemsService) {}
+    constructor(
+        private readonly itemsService: ItemsService,
+        private readonly usersService: UsersService
+    ) {}
 
     //Search Query
     @Get('/search')
@@ -73,22 +78,37 @@ export class ItemsController {
     }
 
     //Check Out Item
-    @Patch('/:id/checkout')
-    async checkOutItem(@Param('id') itemId: string) {
-        const result = await this.itemsService.checkout(itemId);
-        return result;
+    @UseGuards(JwtAuthGuard)
+    @Post('/:id/checkout')
+    async checkOutItem(
+        @Param('id') itemId: string,
+        @Request() req
+    ) {
+        const itemTitle = await this.itemsService.checkout(itemId)
+        if (itemTitle) {
+            //add item to user's checked out items list
+            this.usersService.checkOutItem(req.user._id, itemId);
+            return {message: `You checked out ${itemTitle}`}
+        }
+
+        //item was not available - itemTitle is equal to null
+        return {message: "Sorry, that item is already checked out!"}
+
     }
 
     //Return Item
-    @Patch('/:id/return')
-    async returnItem(@Param('id') itemId: string) {
-        const result = await this.itemsService.return(itemId);
-        return result;
+    @UseGuards(JwtAuthGuard)
+    @Post('/:id/return')
+    async returnItem(
+        @Param('id') itemId: string,
+        @Request() req
+    ) {
+        if (await this.usersService.returnItem(req.user._id, itemId)) {
+            const result = await this.itemsService.return(itemId);
+            return result;
+        }
+        return {message: "Could not return item"};
     }
-
-
-    //Return Item
-
 
     
     //create a queries object with key-value pairs.

@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 
 export type User = any;
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class UsersService {
 
     constructor(@InjectModel("User") private readonly userModel: Model<User>) {}
@@ -43,4 +43,22 @@ export class UsersService {
         return user || null;
     }
 
+    //add item to checked out list
+    async checkOutItem(userId: string, itemId: string) {
+        const user = await this.findById(userId);
+        user.checkedOutItems.push(itemId);
+        user.save();
+    }
+
+    //remove item from checked out list
+    async returnItem(userId: string, itemId: string): Promise<Boolean> {
+        const user = await this.findById(userId);
+        const index = user.checkedOutItems.indexOf(itemId);
+        if (index > -1) {
+            user.checkedOutItems.splice(index, 1);
+            await user.save();
+            return true;
+        }
+        return false;
+    }
 }

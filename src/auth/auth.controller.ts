@@ -1,4 +1,4 @@
-import { Controller, Get, Request, Post, UseGuards, Body } from '@nestjs/common';
+import { Controller, Request, Post, UseGuards, Body } from '@nestjs/common';
 import { UsersService } from "src/users/users.service";
 import { AuthService } from "./auth.service";
 import { LocalAuthGuard } from './local-auth.guard';
@@ -14,7 +14,7 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('/login')
     async login(@Request() req) {
-        return req.user;
+        return this.authService.login(req.user);
     }
 
     @Post('/register')
@@ -26,4 +26,5 @@ export class AuthController {
         const newUserId = await this.userService.register(username, password, adminCode);
         return newUserId || {message: "User could not be created"}
     }
+
 }

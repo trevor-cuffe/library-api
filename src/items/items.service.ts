@@ -6,7 +6,9 @@ import { Model } from 'mongoose';
 @Injectable()
 export class ItemsService {
 
-    constructor(@InjectModel("LibraryItem") private readonly libraryItemModel: Model<LibraryItem>) {}
+    constructor(
+        @InjectModel("LibraryItem") private readonly libraryItemModel: Model<LibraryItem>,
+    ) {}
 
     //create a new library item
     async createProduct(title: string, desc: string, type: string, isAvailable: boolean = true) {
@@ -53,26 +55,27 @@ export class ItemsService {
         
     }
 
-    async checkout(id: string): Promise<{message: string}> {
-        const item = await this.findItem(id);
+    //checkout should receive an item ID and a user ID
+    async checkout(itemId: string): Promise<String | null> {
+        const item = await this.findItem(itemId);
         if (!item.isAvailable) {
-            return {message: "Sorry, that item is already checked out!"}
+            return null
         } else {
+            //set item availability to false
             item.isAvailable = false;
             item.save();
-            return {message: `You checked out ${item.title}`}
+
+            return item.title;
         }
     }
 
+    //return should only be allowed if the current user owns the book
+    //this function will only be called if the item id has already been found in the user's checked out items list
     async return(id: string): Promise<{message: string}> {
         const item = await this.findItem(id);
-        if (item.isAvailable) {
-            return {message: "That item cannot be returned"}
-        } else {
-            item.isAvailable = true;
-            item.save();
-            return {message: `You returned ${item.title}`}
-        }
+        item.isAvailable = true;
+        item.save();
+        return {message: `You returned ${item.title}`}
     }
 
 
