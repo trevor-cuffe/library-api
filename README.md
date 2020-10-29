@@ -16,6 +16,10 @@ Run the following code in the command line in the project root folder to start t
 $ npm run start
 ```
 
+The API has built-in seeder methods. On initialization, the database of library items will be replaced with the data in /src/seed.ts, and the checkedOutItems array in user profiles will all be reset to none. Any existing users will still be stored in the database.
+
+These methods are called in the ItemsService and UsersService Class constructors.
+
 ## Using the API
 
 RESTful Routes:
@@ -47,7 +51,7 @@ Other catalog actions:
 
 Request Type | Route | Used For
 -------------|-------|---------
-GET | '/catalog/search' | Search for library items based on matching properties. Search parameters should be sent as queries in the url. Use the key "by" to indicate which fields to search by (comma-separated if using multiple fields), and "value" to enter a comma-separated list of corrosponding values. Ex. '/catalog/search?by=id,title,description,isAvailable&value=idValue,titleValue,descriptionValue,isAvailableValue'. Id and isAvailable ("true" or "false") must match exactly. Title and description queries will find any item for which the matching string appears somewhere in it's title or description properties (not case-sensitive)
+GET | '/catalog/search' | Search for library items based on matching properties. Search parameters should be sent as queries in the url. Use the key "by" to indicate which fields to search by (comma-separated if using multiple fields), and "value" to enter a comma-separated list of corrosponding values. Ex. '/catalog/search?by=title,isAvailable&value=titleValue,isAvailableValue'. Search by options include "id", "title", "description", and "isAvailable". Id and isAvailable ("true" or "false") must match exactly. Title and description queries will find any item for which the matching string appears somewhere in it's title or description properties (not case-sensitive)
 POST | '/catalog/:id/checkout' | User must be logged in. If the item matching the ID in the url is available, the item property "isAvailable" will be updated to false, and the item id will be added to the property "checkedOutItems" on the current user, and a confirmation message will be returned
 POST | '/catalog/:id/return' | User must be logged in. If the item id is found in the "checkedOutItems" property of the current user, it will be removed, and the "isAvailable" property of the library item matching that id will be set to true
 
@@ -64,7 +68,8 @@ GET | '/profile' | User must be logged in. Displays the profile of the logged in
 ## Goals for the future
 
 - Add a "checkedOutTo" property on resources to track which user currently has the checked out item
-- Expand the various types of resources to include videos and games. Each type would have it's own class as an extension of the basic LibraryItem model, with custom variables such as length, rating, and min and max players
+- Move database seed methods to their own Seeder Module
+- Expand the various types of resources to include videos and board games. Each type would have it's own class as an extension of the basic LibraryItem model, with custom variables such as length, genre, rating, and min and max players
   - Use a LibraryItemTypes enum to restrict the available options for item types upon creation
   - Restrict the ability to edit an item type once it is created. If you wanted to edit a video to be a book instead, you would have to delete the video and then create a book
 

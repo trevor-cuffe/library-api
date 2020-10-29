@@ -12,5 +12,5 @@ export interface User extends mongoose.Document {
     username: string,
     password: string,
     isAdmin: boolean,
-    checkecOutItems: [string]
+    checkedOutItems: string[]
 }
