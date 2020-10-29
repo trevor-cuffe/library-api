@@ -117,9 +117,10 @@ export class ItemsService {
 
     //Seed the database from the seed list
     private async seedDB(seed: {title: string, description: string, type: string}[]) {
-        await this.libraryItemModel.deleteMany({})
+        await this.libraryItemModel.deleteMany({});
         seed.forEach( async (seed: {title: string, description: string, type: string}) => {
             await this.createItem(seed.title, seed.description, seed.type);
         });
+        console.log("Database Seeded");
     }
 }

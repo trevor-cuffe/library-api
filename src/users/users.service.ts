@@ -7,9 +7,7 @@ import * as bcrypt from 'bcrypt';
 @Injectable({ scope: Scope.REQUEST })
 export class UsersService {
 
-    constructor(@InjectModel("User") private readonly userModel: Model<User>) {
-        this.resetUserCheckoutLists();
-    }
+    constructor(@InjectModel("User") private readonly userModel: Model<User>) {}
 
     //Register new user
     async register(username: string, password: string, adminCode?: string): Promise<string | null> {

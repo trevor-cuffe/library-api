@@ -35,6 +35,11 @@ export const libraryItemsSeed = [
         type: "book",
     },
     {
+        title: "Harry Potter and the Sorcerer's Stone",
+        description: "Daniel Radlciffe, Emma Watson, and Rupert Grint make their first appearences in the cinematic series of the wizarding world",
+        type: "movie",
+    },
+    {
         title: "Harry Potter and the Deathly Hallows",
         description: "Hogwarts makes its final stand against Voldemort in this movie based on the book!",
         type: "movie",
