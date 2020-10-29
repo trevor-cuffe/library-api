@@ -4,7 +4,13 @@ This service will run an API for managing library resources and users. The libra
 
 ## Starting the API
 
-Run the following code in the command line to start the API:
+This API is set up to connect to a local MongoDB database. Before launching the API, make sure that MongoDB is installed locally, and run the following in the command line:
+
+```
+$ mongod
+```
+
+Run the following code in the command line in the project root folder to start the API:
 
 ```bash
 $ npm run start
@@ -16,15 +22,15 @@ RESTful Routes:
 
 The API is set to run on 'localhost:4000', unless a port is otherwise specified in process.env
 
-I supposed a truly "RESTful" API would use the route "items" or "library-items" instead of "catalog", but this seemed more fitting in the context.
+I chose to use '/catalog' rather than the technically proper 'items' or '/library-items' in the url, as this seemed more fitting for the context.
 
 Unless otherwise specified, any data submitted in a POST, PATCH, or PUT request should be sent as raw JSON in the request body. Library item parameters should follow the format below:
 
-{
-  title: string,
-  description: string,
-  type: string,
-  isAvailable: boolean (optional - defaults to true)
+{ <br>
+&nbsp;&nbsp;title: string, <br>
+&nbsp;&nbsp;description: string, <br>
+&nbsp;&nbsp;type: string, <br>
+&nbsp;&nbsp;isAvailable: boolean (optional - defaults to true) <br>
 }
 
 Request Type | Route | Action | Used For
@@ -34,6 +40,8 @@ POST | '/catalog' | create action | creates a new library item (restricted to ad
 GET | '/catalog/:id' | show action | displays one library item based on the ID in the url
 PATCH | '/catalog/:id' | update action | modifies an existing library item based on the ID in the url (restricted to admin)
 DELETE | '/catalog/:id' | delete action | deletes one article based on the ID in the url (restricted to admin)
+
+*Note - the "isAvailable" property is not editable in the PATCH route. This property should only be changed through the checkout and return routes, documented below.
 
 Other catalog actions:
 

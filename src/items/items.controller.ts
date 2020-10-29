@@ -39,7 +39,7 @@ export class ItemsController {
         @Body('type') type: string,
         @Body('isAvailable') isAvailable: boolean
     ) {
-        const newItemId = await this.itemsService.createProduct(title, desc, type, isAvailable);
+        const newItemId = await this.itemsService.createItem(title, desc, type, isAvailable);
         return {id: newItemId};
     }
 

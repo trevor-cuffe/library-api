@@ -2,16 +2,19 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { LibraryItem } from "./items.model";
 import { Model } from 'mongoose';
+import { libraryItemsSeed } from '../seed';
 
 @Injectable()
 export class ItemsService {
 
     constructor(
         @InjectModel("LibraryItem") private readonly libraryItemModel: Model<LibraryItem>,
-    ) {}
+    ) {
+        this.seedDB(libraryItemsSeed);
+    }
 
     //create a new library item
-    async createProduct(title: string, desc: string, type: string, isAvailable: boolean = true) {
+    async createItem(title: string, desc: string, type: string, isAvailable: boolean = true) {
 
         const newItem = new this.libraryItemModel({
             title,
@@ -93,7 +96,7 @@ export class ItemsService {
     async deleteItem(id: string) {
         const result = await this.libraryItemModel.deleteOne({_id: id});
         if (result.deletedCount === 0) {
-            throw new NotFoundException('Could not find product.');
+            throw new NotFoundException('Could not find library item.');
         } else {
             return {message: "Successfully deleted"};
         }
@@ -110,5 +113,13 @@ export class ItemsService {
             throw new NotFoundException('Could not find library item');
         }
         return item;
+    }
+
+    //Seed the database from the seed list
+    private async seedDB(seed: {title: string, description: string, type: string}[]) {
+        await this.libraryItemModel.deleteMany({})
+        seed.forEach( async (seed: {title: string, description: string, type: string}) => {
+            await this.createItem(seed.title, seed.description, seed.type);
+        });
     }
 }

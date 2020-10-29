@@ -8,7 +8,9 @@ export type User = any;
 @Injectable({ scope: Scope.REQUEST })
 export class UsersService {
 
-    constructor(@InjectModel("User") private readonly userModel: Model<User>) {}
+    constructor(@InjectModel("User") private readonly userModel: Model<User>) {
+        this.resetUserCheckoutLists();
+    }
 
     //Register new user
     async register(username: string, password: string, adminCode?: string): Promise<string | null> {
@@ -60,5 +62,14 @@ export class UsersService {
             return true;
         }
         return false;
+    }
+
+    //Reset user checked out items
+    async resetUserCheckoutLists() {
+        const users = await this.userModel.find({});
+        users.forEach( async (user: User) => {
+            user.checkedOutItems = [];
+            user.save();
+        })
     }
 }

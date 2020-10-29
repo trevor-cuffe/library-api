@@ -14,7 +14,7 @@ import { UsersService } from './users/users.service';
     AuthModule,
     UsersModule,
     MongooseModule.forFeature([{name: "User", schema: UserSchema}]),
-    MongooseModule.forRoot('mongodb://localhost:27017/cuffe-library')
+    MongooseModule.forRoot('mongodb://localhost:27017/cuffe-library'),
   ],
   controllers: [AppController],
   providers: [AppService, UsersService],
